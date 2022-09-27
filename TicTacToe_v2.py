@@ -154,7 +154,6 @@ class MyLayout(Widget):
             iterator = 0
             for i in range(0, 10):
                 try:
-                    print((10*n)+(i*9))
                     if self.ids[f'button_{(10*n)+(i*9)}'].text == symbol:
                         iterator += 1
                     else:
@@ -170,13 +169,11 @@ class MyLayout(Widget):
                         variables.player_o_won = True
                         self.declare_winner(symbol)
                         break
-        print('')
         iterator_2 = 0
         for n in range(1, 6):
             iterator = 0
             for i in range(0, (9-iterator_2)):
                 try:
-                    print((10-n)+(i*9))
                     if self.ids[f'button_{(10-n)+(i*9)}'].text == symbol:
                         iterator += 1
                     else:
