@@ -1,0 +1,155 @@
+#: import Factory kivy.factory.Factory
+
+<BoardButton@Button>
+    background_normal: ''
+    background_color: (179/255, 179/255, 1, 1)
+    markup: True
+    bold: True
+    text: ''
+
+<OperateButton@Button>
+    background_normal: ''
+    background_color: (204/255, 102/255, 0, 1)
+    markup: True
+    bold: True
+    text: ''
+
+<GameOverPopup>
+    auto_dismiss: True
+    markup: True
+    size_hint: 0.7, 0.4
+    pos_hint: {'center': 0, 'top': .8}
+    title: 'Game over'
+    valign: 'middle'
+    canvas.before:
+        Color:
+            rgba: (1, 166 / 255, 77 / 255, 1)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    BoxLayout:
+        size: root.width, root.height
+        orientation: 'vertical'
+        spacing: 2
+        BoxLayout:
+            size: root.width, root.height
+            spacing: 2
+            padding: 2
+            orientation: 'horizontal'
+            size_hint: 1, 1
+            Label:
+                size_hint: 0.25, 1
+                text: ''
+                id: popup_declare_winner
+                font_size: 25
+                bold: True
+        BoxLayout:
+            size: root.width, root.height
+            size_hint:
+            spacing: 2
+            padding: 2
+            orientation: 'horizontal'
+            size_hint: 1, .6
+            Button:
+                font_size: 20
+                text: 'Quit Program'
+                on_release: app.mainlayout.exit_program()
+
+            Button:
+                font_size: 20
+                text: 'Continue'
+                on_release:
+                    root.dismiss()
+
+<MyLayout>
+    BoxLayout:
+        orientation: 'vertical'
+        size: root.width, root.height
+        spacing: 1
+        padding: 1
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 2
+            padding: 2
+            size_hint: 1, 0.0725
+            # Row 2
+            Label:
+                markup: True
+                bold: True
+                text: 'Player X score:'
+                font_size: 20
+                col: (0, 0, 1, 1)
+                canvas.before:
+                    Color:
+                        rgba: self.col
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+            Label:
+                markup: True
+                bold: True
+                text: '0'
+                size_hint: 0.5, 1
+                font_name: 'Lcd_1.ttf'
+                font_size: 30
+                col: (1/2, 1/2, 1, 1)
+                id: player_x_score
+                canvas.before:
+                    Color:
+                        rgba: self.col
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+            Label:
+                markup: True
+                bold: True
+                text: 'Player O score:'
+                font_size: 20
+                col: (1, 0, 0, 1)
+                canvas.before:
+                    Color:
+                        rgba: self.col
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+            Label:
+                markup: True
+                bold: True
+                text: '0'
+                size_hint: 0.5, 1
+                font_name: 'Lcd_1.ttf'
+                font_size: 30
+                col: (1, 1/2, 1/2, 1)
+                id: player_o_score
+                canvas.before:
+                    Color:
+                        rgba: self.col
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+            OperateButton:
+                size_hint: 0.3, 1
+                id: reset_button
+                on_release: root.reset_score()
+                Image:
+                    source: 'reset.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    size: self.size
+            OperateButton:
+                size_hint: 0.3, 1
+                id: quit_button
+                on_release: root.exit_program()
+                Image:
+                    source: 'remove.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    size: self.size
+        GridLayout:
+            orientation: 'lr-tb'
+            spacing: 2
+            padding: 2
+            cols: 10
+            rows: 10
+            id: playboard
+            size_hint: 1, 0.9
