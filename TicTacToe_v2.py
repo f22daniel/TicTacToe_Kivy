@@ -12,13 +12,15 @@ Window.size = (600, 600)
 
 class Variables:
 
-    def __init__(self, score_player_x=0, score_player_o=0, player_turn='X', player_x_won=False, player_o_won=False):
+    def __init__(self, score_player_x=0, score_player_o=0, player_turn='X', player_x_won=False, player_o_won=False, victory_button=None):
+        if victory_button is None:
+            victory_button = []
         self.score_player_x = score_player_x
         self.score_player_o = score_player_o
         self.player_turn = player_turn
         self.player_x_won = player_x_won
         self.player_o_won = player_o_won
-
+        self.victory_button = victory_button
 
 variables = Variables()
 
@@ -39,17 +41,18 @@ class MyLayout(Widget):
             self.ids.playboard.add_widget(board_button)
             board_button.bind(on_release=partial(self.play, f'button_{i}'))
 
-    def reset(self):
-
-        for i in range(1, 101):
-            self.ids[f'button_{i}'].text = ''
-        variables.player_x_won = False
-        variables.player_o_won = False
-
     def reset_score(self):
         self.reset()
         self.ids.player_x_score.text = '0'
         self.ids.player_o_score.text = '0'
+
+    def reset(self):
+        for i in range(1, 101):
+            self.ids[f'button_{i}'].text = ''
+            self.ids[f'button_{i}'].background_color = (179/255, 179/255, 1, 1)
+        variables.player_x_won = False
+        variables.player_o_won = False
+        variables.player_turn = 'X'
 
     def play(self, number, state):
         print(f'Button {number} pressed.')
@@ -57,6 +60,8 @@ class MyLayout(Widget):
         if self.ids[number].text == '':
             self.ids[number].text = variables.player_turn
             self.check_winner_x(variables.player_turn)
+        else:
+            return
         if variables.player_turn == 'X':
             self.ids[number].color = (0, 0, 1, 1)
             variables.player_turn = 'O'
@@ -74,7 +79,7 @@ class MyLayout(Widget):
             self.ids.player_o_score.text = f'{variables.score_player_o}'
         open_popup = GameOverPopup()
         open_popup.open()
-        self.reset()
+        # self.reset()
 
     def check_winner_x(self, symbol):
         self.check_row(symbol)
@@ -89,15 +94,19 @@ class MyLayout(Widget):
             for i in range(1, 11):
                 if self.ids[f'button_{i+x}'].text == symbol:
                     iterator += 1
+                    variables.victory_button.append(f'button_{i+x}')
                 else:
                     iterator = 0
+                    variables.victory_button.clear()
                 if iterator == 5:
                     if symbol == 'X':
                         variables.player_x_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
                     elif symbol == 'O':
                         variables.player_o_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
 
@@ -109,15 +118,19 @@ class MyLayout(Widget):
                 x = 10*n
                 if self.ids[f'button_{x+i}'].text == symbol:
                     iterator += 1
+                    variables.victory_button.append(f'button_{x+i}')
                 else:
                     iterator = 0
+                    variables.victory_button.clear()
                 if iterator == 5:
                     if symbol == 'X':
                         variables.player_x_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
                     elif symbol == 'O':
                         variables.player_o_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
 
@@ -134,17 +147,21 @@ class MyLayout(Widget):
                     # print(x+1+(11*i))
                     if self.ids[f'button_{x+1+(11*i)}'].text == symbol:
                         iterator += 1
+                        variables.victory_button.append(f'button_{x+1+(11*i)}')
                     else:
                         iterator = 0
+                        variables.victory_button.clear()
                 except KeyError:
                     pass
                 if iterator == 5:
                     if symbol == 'X':
                         variables.player_x_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
                     elif symbol == 'O':
                         variables.player_o_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
 
@@ -156,17 +173,21 @@ class MyLayout(Widget):
                 try:
                     if self.ids[f'button_{(10*n)+(i*9)}'].text == symbol:
                         iterator += 1
+                        variables.victory_button.append(f'button_{(10*n)+(i*9)}')
                     else:
                         iterator = 0
+                        variables.victory_button.clear()
                 except KeyError:
                     pass
                 if iterator == 5:
                     if symbol == 'X':
                         variables.player_x_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
                     elif symbol == 'O':
                         variables.player_o_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
         iterator_2 = 0
@@ -176,21 +197,28 @@ class MyLayout(Widget):
                 try:
                     if self.ids[f'button_{(10-n)+(i*9)}'].text == symbol:
                         iterator += 1
+                        variables.victory_button.append(f'button_{(10-n)+(i*9)}')
                     else:
                         iterator = 0
-
+                        variables.victory_button.clear()
                 except KeyError:
                     pass
                 if iterator == 5:
                     if symbol == 'X':
                         variables.player_x_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
                     elif symbol == 'O':
                         variables.player_o_won = True
+                        self.highlight_win()
                         self.declare_winner(symbol)
                         break
             iterator_2 += 1
+
+    def highlight_win(self):
+        for j, button in enumerate(variables.victory_button):
+            self.ids[button].background_color = (1, 71 / 255, 26 / 255, 1)
 
     @staticmethod
     def exit_program():
@@ -204,7 +232,8 @@ class TicTacToeApp(App):
 
     def build(self):
         Window.clearcolor = (1, 1, 1, 1)
-        return MyLayout()
+        return self.mainlayout
 
 if __name__ == '__main__':
     TicTacToeApp().run()
+
